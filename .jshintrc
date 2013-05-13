@@ -1,0 +1,17 @@
+{
+ "predef": ["Ext", "document", "window", "Causata"],
+ "bitwise": true,
+ "curly": true,
+ "eqeqeq": false,
+ "forin": true,
+ "immed": true,
+ "latedef": true,
+ "newcap": false,
+ "noarg": true,
+ "noempty": true,
+ "nonew": true,
+ "undef": true,
+ "nonstandard": true,
+ "loopfunc":true,
+ "browser":true
+}

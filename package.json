@@ -1,0 +1,24 @@
+{
+  "name": "svgenie",
+  "version": "0.0.0",
+  "description": "Save D3 and other SVG as an image without using a server component",
+  "main": "svgenie.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "grunt test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/Causata/svgenie.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "readmeFilename": "README.md",
+  "devDependencies": {
+    "grunt": "~0.4.1",
+    "grunt-contrib-jshint": "~0.4.3",
+    "grunt-contrib-nodeunit": "~0.1.2"
+  }
+}
