@@ -1,4 +1,4 @@
-/* global console */
+/* global canvg window document */
 /*
  * svgenie
  * https://github.com/Causata/svgenie
@@ -10,24 +10,79 @@
 var svgenie = (function(){
     "use strict";
     
-    var _toCanvas = function( id, options ){
-        if ( id.substr(0,1) == "#" ) { id = id.substr(1); }
-        console.log(id);
+    var _serializeXmlNode = function (xmlNode) {
+        if (typeof window.XMLSerializer != "undefined") {
+            return (new window.XMLSerializer()).serializeToString(xmlNode);
+        } else if (typeof xmlNode.xml != "undefined") {
+            return xmlNode.xml;
+        }
+        return "";
     };
     
-    var _toDataURL = function( id, options ){
-        var canvas = _toCanvas( id, options );
-        return canvas.toDataURL("image/png");
+    var _toCanvas = function( svg, options, callback ){
+        if ( typeof svg == "string" ){
+            if ( svg.substr(0,1) == "#" ) { svg = svg.substr(1); }
+            svg = document.getElementById(svg);
+        }
+        
+        // Hopefully don't need to attach anything to the DOM
+        var canvas = document.createElement("canvas");
+        canvg( canvas, _serializeXmlNode(svg), {
+            ignoreMouse : true,
+            ignoreAnimation : true,
+            renderCallback : function(){ callback( canvas ); }
+        });
+    };
+    
+    var _toDataURL = function( id, options, callback ){
+        _toCanvas( id, options, function( canvas ){
+            callback( canvas.toDataURL("image/png"), canvas );
+        });
     };
     
     var _save = function( id, options ){
-        var content = _toDataURL( id, options );
         
+        _toDataURL( id, options, function(data, canvas){
+            _saveToFile({
+                data : data,
+                canvas : canvas,
+                name : options.name || "image.png"
+            });
+        });
+    };
+    
+    var _saveToFile = function( conf ){
+        var a = document.createElement( "a" );
+        
+        // Can we use the "download" attribute? (Chrome && FF20)
+        if( a.download != null ){
+            a.href = conf.data;
+            a.download = conf.name;
+            _pretendClick(a);
+            return;
+        };
+        
+        // IE10
+        if( window.navigator.msSaveBlob ){
+            conf.canvas.toBlob( function ( blobby ){
+                if( window.navigator.msSaveBlob ){
+                    window.navigator.msSaveBlob( blobby, conf.name );
+                }
+            }, "image/png" );
+            return;
+        }
+        
+    };
+    
+    function _pretendClick(eElement) {
+        var oEvent = document.createEvent("MouseEvents");
+        oEvent.initMouseEvent( "click", true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null );
+        return eElement.dispatchEvent(oEvent);
     };
     
     return {
         save : _save,
         toCanvas : _toCanvas,
-        _toDataURL : _toDataURL
+        toDataURL : _toDataURL
     };
 })();
