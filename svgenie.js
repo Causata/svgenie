@@ -27,8 +27,9 @@ var svgenie = (function(){
         
         // Hopefully don't need to attach anything to the DOM
         var canvas = document.createElement("canvas");
-        canvas.setAttribute("height",svg.offsetHeight);
-        canvas.setAttribute("width",svg.offsetWidth);
+        var rect = svg.getBoundingClientRect();
+        canvas.setAttribute("height", rect.height);
+        canvas.setAttribute("width", rect.width);
         canvg( canvas, _serializeXmlNode(svg), {
             ignoreMouse : true,
             ignoreAnimation : true,
